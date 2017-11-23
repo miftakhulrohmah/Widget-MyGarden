@@ -26,6 +26,11 @@ public class PlantWidgetProvider extends AppWidgetProvider {
 
         views.setOnClickPendingIntent(R.id.widget_plant_image, pendingIntent);
 
+        Intent wateringIntent = new Intent(context, PlantWateringService.class);
+        wateringIntent.setAction(PlantWateringService.ACTION_WATER_PLANTS);
+        PendingIntent wateringPendingIntent = PendingIntent.getService(context, 0, wateringIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        views.setOnClickPendingIntent(R.id.widget_water_button, wateringPendingIntent);
+
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
