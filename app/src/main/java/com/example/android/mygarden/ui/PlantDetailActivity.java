@@ -1,7 +1,6 @@
 package com.example.android.mygarden.ui;
 
 import android.content.ContentUris;
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,7 +32,6 @@ public class PlantDetailActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plant_detail);
         mPlantId = getIntent().getLongExtra(EXTRA_PLANT_ID, PlantContract.INVALID_PLANT_ID);
-
         getSupportLoaderManager().initLoader(SINGLE_LOADER_ID, null, this);
     }
 
@@ -42,23 +40,7 @@ public class PlantDetailActivity extends AppCompatActivity
     }
 
     public void onWaterButtonClick(View view) {
-
-        Uri SINGLE_PLANT_URI = ContentUris.withAppendedId(
-                BASE_CONTENT_URI.buildUpon().appendPath(PATH_PLANTS).build(), mPlantId);
-        Cursor cursor = getContentResolver().query(SINGLE_PLANT_URI, null, null, null, null);
-        if (cursor == null || cursor.getCount() < 1) return; //can't find this plant!
-        cursor.moveToFirst();
-        long lastWatered = cursor.getLong(cursor.getColumnIndex(PlantContract.PlantEntry.COLUMN_LAST_WATERED_TIME));
-        long timeNow = System.currentTimeMillis();
-        if ((timeNow - lastWatered) > PlantUtils.MAX_AGE_WITHOUT_WATER)
-            return;
-
-        ContentValues contentValues = new ContentValues();
-
-        contentValues.put(PlantContract.PlantEntry.COLUMN_LAST_WATERED_TIME, timeNow);
-        getContentResolver().update(SINGLE_PLANT_URI, contentValues, null, null);
-        cursor.close();
-        PlantWateringService.startActionUpdatePlantWidgets(this);
+        PlantWateringService.startActionWaterPlant(this, mPlantId);
     }
 
     @Override
